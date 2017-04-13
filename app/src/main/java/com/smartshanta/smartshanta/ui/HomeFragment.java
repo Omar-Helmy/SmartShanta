@@ -1,4 +1,4 @@
-package com.smartshanta.smartshanta;
+package com.smartshanta.smartshanta.ui;
 
 
 import android.bluetooth.BluetoothAdapter;
@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.smartshanta.smartshanta.R;
 import com.smartshanta.smartshanta.services.BluetoothService;
 import com.smartshanta.smartshanta.util.Constants;
 

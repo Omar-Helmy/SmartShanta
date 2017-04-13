@@ -1,4 +1,4 @@
-package com.smartshanta.smartshanta;
+package com.smartshanta.smartshanta.ui;
 
 
 import android.content.BroadcastReceiver;
@@ -22,6 +22,7 @@ import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.smartshanta.smartshanta.R;
 import com.smartshanta.smartshanta.data.DataContract;
 import com.smartshanta.smartshanta.services.BluetoothService;
 import com.smartshanta.smartshanta.util.Constants;

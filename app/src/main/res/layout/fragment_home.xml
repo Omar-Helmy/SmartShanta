@@ -2,21 +2,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.smartshanta.smartshanta.HomeFragment"
+    tools:context=".ui.HomeFragment"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="120dp"
-        android:scaleType="centerInside"
-        android:src="@drawable/smart_shanta_logo"/>
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_marginTop="120dp"
-        android:layout_height="match_parent">
-        <GridLayout
+
+    <GridLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:rowCount="3"
+            android:rowCount="2"
             android:columnCount="2">
             <Button
                 android:layout_width="0dp"
@@ -71,8 +63,4 @@
             android:src="@drawable/ic_bluetooth_searching_white_36dp"
             app:pressedTranslationZ="12dp"
             android:layout_gravity="center"/>
-    </FrameLayout>
-
-
-
 </FrameLayout>

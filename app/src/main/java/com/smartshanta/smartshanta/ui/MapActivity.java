@@ -1,4 +1,4 @@
-package com.smartshanta.smartshanta;
+package com.smartshanta.smartshanta.ui;
 
 import android.content.Intent;
 import android.location.Location;
@@ -11,6 +11,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.smartshanta.smartshanta.R;
 
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback {
 

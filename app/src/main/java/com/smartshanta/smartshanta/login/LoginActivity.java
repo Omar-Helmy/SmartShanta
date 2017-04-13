@@ -1,13 +1,12 @@
 package com.smartshanta.smartshanta.login;
 
-import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.WindowManager;
 
-import com.smartshanta.smartshanta.MainActivity;
+import com.smartshanta.smartshanta.ui.MainActivity;
 import com.smartshanta.smartshanta.R;
 
 public class LoginActivity extends AppCompatActivity {

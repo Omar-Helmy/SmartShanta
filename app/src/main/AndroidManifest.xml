@@ -37,7 +37,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".MainActivity" />
+        <activity android:name=".ui.MainActivity" />
 
         <service
             android:name=".services.BluetoothService"
@@ -49,8 +49,8 @@
             android:enabled="true"
             android:exported="false" />
 
-        <activity android:name=".MapActivity"
-            android:parentActivityName=".MainActivity"/>
+        <activity android:name=".ui.MapActivity"
+            android:parentActivityName=".ui.MainActivity"/>
 
     </application>
 
