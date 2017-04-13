@@ -12,7 +12,7 @@ import com.smartshanta.smartshanta.R;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class LoginFragment extends android.app.Fragment {
+public class LoginFragment extends Fragment {
 
 
     public LoginFragment() {

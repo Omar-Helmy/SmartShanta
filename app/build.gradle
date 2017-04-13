@@ -30,6 +30,8 @@ dependencies {
     compile 'com.google.firebase:firebase-auth:10.2.1'
     compile 'com.google.firebase:firebase-core:10.2.1'
     compile 'com.google.firebase:firebase-database:10.2.1'
+    // Facebook:
+    compile 'com.facebook.android:facebook-android-sdk:[4,5)'
     // Google Maps:
     compile 'com.google.android.gms:play-services:10.2.1'
     // Material Design:

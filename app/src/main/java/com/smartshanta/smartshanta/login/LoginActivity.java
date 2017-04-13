@@ -12,7 +12,7 @@ import com.smartshanta.smartshanta.R;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private FragmentTransaction fragmentTransaction;
+    private android.support.v4.app.FragmentTransaction fragmentTransaction;
     private final static int SPLASH_DISPLAY_LENGTH = 2000;
     private LoginFragment loginFragment;
 
@@ -25,7 +25,7 @@ public class LoginActivity extends AppCompatActivity {
 
         loginFragment = new LoginFragment();
 
-        fragmentTransaction = getFragmentManager().beginTransaction();
+        fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.fragment_holder, loginFragment);
         fragmentTransaction.commit();
         // New Handler to start the MainActivity and close this SplashScreen after some seconds.
