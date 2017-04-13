@@ -1,6 +1,5 @@
 package com.smartshanta.smartshanta.login;
 
-import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Handler;
@@ -8,8 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.WindowManager;
 
-import com.smartshanta.smartshanta.ListsFragment;
-import com.smartshanta.smartshanta.PagerActivity;
+import com.smartshanta.smartshanta.MainActivity;
 import com.smartshanta.smartshanta.R;
 
 public class LoginActivity extends AppCompatActivity {
@@ -35,7 +33,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void run() {
                         /* Create an Intent that will start the MainActivity. */
-                Intent mainIntent = new Intent(LoginActivity.this, PagerActivity.class);
+                Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
                 startActivity(mainIntent);
                 //To prevent the user from using the back button to go back to the Login activity
                 // you have to finish() the activity after starting a new one.

@@ -1,11 +1,9 @@
 package com.smartshanta.smartshanta;
 
 import android.app.Dialog;
-import android.bluetooth.BluetoothAdapter;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.SystemClock;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.DialogFragment;
@@ -22,14 +20,11 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.smartshanta.smartshanta.data.DatabaseHelper;
-import com.smartshanta.smartshanta.data.DatabaseProvider;
+import com.smartshanta.smartshanta.data.DataContract;
 import com.smartshanta.smartshanta.services.BluetoothService;
-import com.smartshanta.smartshanta.utilities.Constants;
+import com.smartshanta.smartshanta.util.Constants;
 
-import java.util.Calendar;
-
-public class PagerActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity {
 
     private TabLayout tabLayout;
     private ViewPager viewPager;
@@ -134,10 +129,10 @@ public class PagerActivity extends AppCompatActivity {
                             if(Constants.isShantaConnected){
 
                                 ContentValues cv = new ContentValues();
-                                cv.put(DatabaseHelper.ITEM_NAME_ENTRY, itemName.getText().toString());
-                                cv.put(DatabaseHelper.ITEM_TIME_STAMP_ENTRY, Long.toString(System.currentTimeMillis()));
-                                cv.put(DatabaseHelper.ITEM_CHECKED_ENTRY, 0);
-                                getActivity().getContentResolver().insert(DatabaseProvider.LIST_URI, cv);
+                                cv.put(DataContract.COLUMN_ITEM_NAME, itemName.getText().toString());
+                                cv.put(DataContract.COLUMN_TS, Long.toString(System.currentTimeMillis()));
+                                cv.put(DataContract.COLUMN_ITEM_CHECKED, 0);
+                                getActivity().getContentResolver().insert(DataContract.LIST_URI, cv);
 
                                 Intent intent = new Intent(getActivity(), BluetoothService.class);
                                 intent.setAction(Constants.BL_ACTION_SEND);

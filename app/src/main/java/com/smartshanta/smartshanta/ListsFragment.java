@@ -2,13 +2,11 @@ package com.smartshanta.smartshanta;
 
 
 import android.content.BroadcastReceiver;
-import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -21,14 +19,12 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.CursorAdapter;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.smartshanta.smartshanta.data.DatabaseHelper;
-import com.smartshanta.smartshanta.data.DatabaseProvider;
+import com.smartshanta.smartshanta.data.DataContract;
 import com.smartshanta.smartshanta.services.BluetoothService;
-import com.smartshanta.smartshanta.utilities.Constants;
+import com.smartshanta.smartshanta.util.Constants;
 
 import java.sql.Timestamp;
 
@@ -90,7 +86,7 @@ public class ListsFragment extends Fragment  implements LoaderManager.LoaderCall
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return new CursorLoader (getActivity(), DatabaseProvider.LIST_URI, null,null,null,null);
+        return new CursorLoader (getActivity(), DataContract.LIST_URI, null,null,null,null);
     }
 
     @Override
@@ -110,11 +106,12 @@ public class ListsFragment extends Fragment  implements LoaderManager.LoaderCall
 
             ViewHolder viewHolder = (ViewHolder) view.getTag();
             // read from cursor
-            viewHolder.item.setText(cursor.getString(cursor.getColumnIndex(DatabaseHelper.ITEM_NAME_ENTRY)));
-            viewHolder.time.setText(new Timestamp(Long.parseLong(cursor.getString(cursor.getColumnIndex(DatabaseHelper.ITEM_TIME_STAMP_ENTRY)))).toString().substring(0,16));
-            viewHolder.checkBox.setChecked(cursor.getInt(cursor.getColumnIndex(DatabaseHelper.ITEM_CHECKED_ENTRY))==1);
+            viewHolder.item.setText(cursor.getString(cursor.getColumnIndex(DataContract.COLUMN_ITEM_NAME)));
+            viewHolder.time.setText(new Timestamp(
+                    Long.parseLong(cursor.getString(cursor.getColumnIndex(DataContract.COLUMN_TS)))).toString().substring(0,16));
+            viewHolder.checkBox.setChecked(cursor.getInt(cursor.getColumnIndex(DataContract.COLUMN_ITEM_CHECKED))==1);
             if(Constants.isShantaConnected)
-                checkItemInShanta(cursor.getString(cursor.getColumnIndex(DatabaseHelper.ITEM_NAME_ENTRY)));
+                checkItemInShanta(cursor.getString(cursor.getColumnIndex(DataContract.COLUMN_ITEM_NAME)));
         }
 
         @Override
@@ -156,8 +153,8 @@ public class ListsFragment extends Fragment  implements LoaderManager.LoaderCall
             if(intent.getAction().equals(Constants.BL_ACTION_ITEM_CHECK))
             {
                 ContentValues cv = new ContentValues();
-                cv.put(DatabaseHelper.ITEM_CHECKED_ENTRY, intent.getStringExtra("msg").equals("inside")?1:0);
-                getActivity().getContentResolver().update(DatabaseProvider.LIST_URI.buildUpon().appendPath(intent.getStringExtra("msg")).build(),
+                cv.put(DataContract.COLUMN_ITEM_CHECKED, intent.getStringExtra("msg").equals("inside")?1:0);
+                getActivity().getContentResolver().update(DataContract.appendToUri(intent.getStringExtra("msg")),
                         cv,null,null);
             }
         }

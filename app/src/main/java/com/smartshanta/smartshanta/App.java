@@ -1,12 +1,11 @@
 package com.smartshanta.smartshanta;
 
-import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.multidex.MultiDex;
 import android.support.multidex.MultiDexApplication;
 
-import com.smartshanta.smartshanta.utilities.Constants;
+import com.smartshanta.smartshanta.util.Constants;
 
 /**
  * Created by OMAR on 25/01/2017.

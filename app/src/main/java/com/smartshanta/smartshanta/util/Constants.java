@@ -1,4 +1,4 @@
-package com.smartshanta.smartshanta.utilities;
+package com.smartshanta.smartshanta.util;
 
 /**
  * Created by OMAR on 22/01/2017.

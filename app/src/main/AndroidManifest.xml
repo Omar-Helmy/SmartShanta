@@ -33,20 +33,20 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".PagerActivity" />
+        <activity android:name=".MainActivity" />
 
         <service
             android:name=".services.BluetoothService"
             android:exported="false" />
 
         <provider
-            android:name=".data.DatabaseProvider"
+            android:name=".data.DataProvider"
             android:authorities="com.smartshanta.smartshanta.provider"
             android:enabled="true"
             android:exported="false" />
 
         <activity android:name=".MapActivity"
-            android:parentActivityName=".PagerActivity"/>
+            android:parentActivityName=".MainActivity"/>
 
     </application>
 
