@@ -116,14 +116,15 @@ public class HomeFragment extends Fragment{
             }
         });
 
-        // The filter's action
+        /***************** Register BCR with intent filters ********************/
+        // The Intent Filters' action
         IntentFilter connectIF = new IntentFilter(
                 Constants.BL_ACTION_CONNECT);
         IntentFilter locateIF = new IntentFilter(
                 Constants.BL_ACTION_LOCATE);
         // BC instance
         BluetoothReceiver bluetoothReceiver = new BluetoothReceiver();
-        // Registers the DownloadStateReceiver and its intent filters
+        // Registers each receiver and its intent filter
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(
                 bluetoothReceiver,
                 connectIF);
@@ -134,27 +135,24 @@ public class HomeFragment extends Fragment{
         return fragmentLayout;
     }
 
+    /******************* Broadcast Receiver ************************/
     // Broadcast receiver for receiving status updates from the IntentService
     private class BluetoothReceiver extends BroadcastReceiver
     {
         // Called when the BroadcastReceiver gets an Intent it's registered to receive
         @Override
         public void onReceive(Context context, Intent intent) {
-            if(intent.getAction().equals(Constants.BL_ACTION_CONNECT))
-            {
+            if(intent.getAction().equals(Constants.BL_ACTION_CONNECT)) {
                 bluetoothBtn.setVisibility(View.GONE);
                 Constants.isShantaConnected = true;
             }
-            else if(intent.getAction().equals(Constants.BL_ACTION_LOCATE))
-            {
-                String msg = intent.getStringExtra("msg");
+            else if(intent.getAction().equals(Constants.BL_ACTION_LOCATE)) {
+                String msg = intent.getStringExtra(Constants.BL_MSG_KEY);
                 if(msg!=null) {
                     Intent activityIntent = new Intent(getActivity(), MapActivity.class);
-                    activityIntent.putExtra("msg", msg);
+                    activityIntent.putExtra(Constants.BL_MSG_KEY, msg);
                     startActivity(activityIntent);
                 }
-                else
-                    Toast.makeText(getActivity(), "Please connect first!", Toast.LENGTH_SHORT).show();
             }
         }
     }
