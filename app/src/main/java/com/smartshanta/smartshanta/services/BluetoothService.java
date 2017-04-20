@@ -22,10 +22,11 @@ import java.util.UUID;
 
 public class BluetoothService extends IntentService {
 
-    private BluetoothAdapter mBluetoothAdapter;
-    public static BluetoothSocket mSocket;
-    private BluetoothDevice shanta;
+    private BluetoothAdapter adapter;
+    public static BluetoothSocket socket;
+    private BluetoothDevice device;
     private String action;
+    private final String LOG_TAG = BluetoothService.class.getSimpleName();
 
     public BluetoothService() {
         super("BluetoothService");
@@ -36,53 +37,55 @@ public class BluetoothService extends IntentService {
 
         if (intent != null) {
             action = intent.getAction();
-            if (action.equals(Constants.BL_ACTION_CONNECT)) {
-                mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-                getBluetoothDevice();
-                requestConnection();
+            if (action != null && action.equals(Constants.BL_ACTION_CONNECT)) {
+                adapter = BluetoothAdapter.getDefaultAdapter();
+                connectToShanta();
             } else
                 sendData(intent.getStringExtra("msg"));
         }
     }
 
-    private void getBluetoothDevice() {
+    private void connectToShanta() {
+
+        /*** Get Bluetooth Device ***/
         // get paired devices
-        final Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
+        final Set<BluetoothDevice> pairedDevices = adapter.getBondedDevices();
         // If there are paired devices
         if (pairedDevices.size() > 0) {
             // Loop through paired devices
             for (BluetoothDevice device : pairedDevices) {
                 String deviceName = device.getName();
                 String deviceAdd = device.getAddress();
-                if (deviceName.equals("HC-05")) {
-                    Log.i("Bluetooth","Device found! Name: \"" + deviceName + "\" Address: \"" + deviceAdd + "\"");
-                    shanta = device;
+                if (deviceName.equals(Constants.BL_DEVICE_NAME)) {
+                    this.device = device;
+                    Log.i(LOG_TAG,"Device found! Name: \"" + deviceName + "\" Address: \"" + deviceAdd + "\"");
                     // it is better to cancel discovery to save Bluetooth resources before starting any connections:
-                    mBluetoothAdapter.cancelDiscovery();
-
+                    adapter.cancelDiscovery();
                     break;
                 }
             }
         }
-    }
-
-    private void requestConnection(){
+        /*** Try to connect ***/
         try {
             // Get a BluetoothSocket to connect with the given BluetoothDevice.
-            mSocket = shanta.createRfcommSocketToServiceRecord(UUID.fromString(Constants.UUID));
+            if(device != null)
+                socket = device.createRfcommSocketToServiceRecord(UUID.fromString(Constants.UUID));
         } catch (IOException e) {
         }
-        while(true){
+        while(socket != null){
             try {
                 // Connect to the remote device through the socket. This call blocks
                 // until it succeeds or throws an exception.
-                mSocket.connect();
+                socket.connect();
+                // Done connected
+                Log.i(LOG_TAG,"Done! Connected with: "+socket.getRemoteDevice().getName());
                 sendState(Constants.BL_ACTION_CONNECT, Constants.BL_MSG_CONNECTED);
                 return;
             } catch (IOException connectException) {
-
+                // continue trying to connect again
             }
         }
+
     }
 
     private void receiveData()
@@ -91,13 +94,14 @@ public class BluetoothService extends IntentService {
         InputStreamReader inr;
         BufferedReader br;
         String msg="";
-        char[] buffer = new char[30];  // buffer store for the stream, 3 bytes for BPM + 5 bytes for temp
-        try {
-            while(true) {
-                in = mSocket.getInputStream();
+        char[] buffer = new char[30];  // buffer store
+        while(true) {
+            try {
+                in = socket.getInputStream();
                 inr = new InputStreamReader(in);
                 br = new BufferedReader(inr);
-                while(in.available() > 0 && br.ready()) {
+                while(in.available() > 0 && inr.ready() && br.ready()) {
+                    // TODO: use br.readLine() to get String!!!
                     br.read(buffer);
                     if (buffer[0]=='\u0000')
                         continue;
@@ -106,9 +110,10 @@ public class BluetoothService extends IntentService {
                 }
                 return;
             }
+            catch (IOException e) {
+                // continue
+            }
 
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 
@@ -117,7 +122,7 @@ public class BluetoothService extends IntentService {
         OutputStream os;
         OutputStreamWriter osw;
         try {
-            os = mSocket.getOutputStream();
+            os = socket.getOutputStream();
             os.write(msg.getBytes());
             receiveData();
         } catch (IOException e) {
@@ -140,11 +145,11 @@ public class BluetoothService extends IntentService {
     private void acceptConnection() {
         BluetoothServerSocket bluetoothServerSocket;
         try {
-            bluetoothServerSocket = mBluetoothAdapter
+            bluetoothServerSocket = adapter
                     .listenUsingRfcommWithServiceRecord("com.smartshanta.smartshanta", UUID.fromString(Constants.UUID));
             Log.d("Bluetooth",bluetoothServerSocket.toString());
             while (true) {
-                mSocket = bluetoothServerSocket.accept();
+                socket = bluetoothServerSocket.accept();
                 Log.d("Bluetooth",bluetoothServerSocket.toString());
                 bluetoothServerSocket.close();
                 sendState(Constants.BL_ACTION_CONNECT);

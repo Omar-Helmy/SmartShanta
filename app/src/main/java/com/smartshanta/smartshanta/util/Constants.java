@@ -5,17 +5,23 @@ package com.smartshanta.smartshanta.util;
  */
 public abstract class Constants {
 
-    /*Bluetooth*/
-    //actions:
+    public static final String SHARED_PREF_FILE = "com.smartshanta.smartshanta.SharedPreferences";
+
+    /********* Bluetooth ********/
+    public static final String BL_DEVICE_MAC = "30:14:11:20:04:11";
+    public static final String BL_DEVICE_NAME = "HC-05";
+    public static final String UUID = "00001101-0000-1000-8000-00805F9B34FB";
+    public static boolean isShantaConnected = false;
+
+
+    /************* Actions ***********/
     public static final String BL_ACTION_CONNECT = "connect";
     public static final String BL_ACTION_SEND = "send";
     public static final String BL_ACTION_ITEM_CHECK = "check";
     public static final String BL_ACTION_LOCATE = "locate";
 
-    public static final String BL_MAC = "30:14:11:20:04:11";
-    public static final String UUID = "00001101-0000-1000-8000-00805F9B34FB";
-    public static boolean isShantaConnected = false;
-    //Messages:
+
+    /************ Messages ************/
     public static final String BL_MSG_CONNECTED = "connected";
     public static final String BL_MSG_STUFF = "a";
     public static final String BL_MSG_FIND_ME = "b";
@@ -27,9 +33,6 @@ public abstract class Constants {
     public static final String BL_MSG_FINGER_DEFINE_USER = "l";
     public static final String BL_MSG_FINGER_REMOVE_USER = "m";
     public static final String BL_MSG_LOCATE = "h";
-
-
-    public static final String SHARED_PREF_FILE = "com.smartshanta.smartshanta.SharedPreferences";
 
 
 }

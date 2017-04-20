@@ -1,10 +1,10 @@
 <resources>
-    <string name="app_name">SmartShanta</string>
+    <string name="app_name">Smart Shanta</string>
 
     <string name="drawer_toggle_open">open</string>
     <string name="drawer_toggle_close">close</string>
 
     <!-- Facebook -->
-    <string name="facebook_app_id">373006963093421</string>
+    <string name="facebook_application_id">373006963093421</string>
 
 </resources>
