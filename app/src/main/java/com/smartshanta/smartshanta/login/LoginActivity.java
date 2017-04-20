@@ -13,7 +13,6 @@ public class LoginActivity extends AppCompatActivity {
 
     private android.support.v4.app.FragmentTransaction fragmentTransaction;
     private final static int SPLASH_DISPLAY_LENGTH = 2000;
-    private LoginFragment loginFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,11 +21,7 @@ public class LoginActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        loginFragment = new LoginFragment();
 
-        fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.fragment_holder, loginFragment);
-        fragmentTransaction.commit();
         // New Handler to start the MainActivity and close this SplashScreen after some seconds.
         new Handler().postDelayed(new Runnable() {
             @Override

@@ -37,17 +37,18 @@ public class BluetoothService extends IntentService {
 
         if (intent != null) {
             action = intent.getAction();
-            if (action != null && action.equals(Constants.BL_ACTION_CONNECT)) {
-                adapter = BluetoothAdapter.getDefaultAdapter();
+            // action is one of two options: connect to shanta at first time -OR- send data/request to shanta
+            if (action.equals(Constants.BL_ACTION_CONNECT)) {
                 connectToShanta();
             } else
-                sendData(intent.getStringExtra("msg"));
+                sendData(intent.getStringExtra(Constants.BL_MSG_KEY));
         }
     }
 
     private void connectToShanta() {
 
         /*** Get Bluetooth Device ***/
+        adapter = BluetoothAdapter.getDefaultAdapter();
         // get paired devices
         final Set<BluetoothDevice> pairedDevices = adapter.getBondedDevices();
         // If there are paired devices
@@ -79,7 +80,7 @@ public class BluetoothService extends IntentService {
                 socket.connect();
                 // Done connected
                 Log.i(LOG_TAG,"Done! Connected with: "+socket.getRemoteDevice().getName());
-                sendState(Constants.BL_ACTION_CONNECT, Constants.BL_MSG_CONNECTED);
+                broadcastState(Constants.BL_ACTION_CONNECT, Constants.BL_MSG_CONNECTED);
                 return;
             } catch (IOException connectException) {
                 // continue trying to connect again
@@ -100,14 +101,16 @@ public class BluetoothService extends IntentService {
                 in = socket.getInputStream();
                 inr = new InputStreamReader(in);
                 br = new BufferedReader(inr);
-                while(in.available() > 0 && inr.ready() && br.ready()) {
+                while(in.available()>0 && inr.ready() && br.ready()) {
                     // TODO: use br.readLine() to get String!!!
                     br.read(buffer);
                     if (buffer[0]=='\u0000')
                         continue;
                     msg += new String(buffer);
-                    sendState(action, msg);
+                    broadcastState(action, msg);
                 }
+                // close stream and any associated streams with it:
+                in.close();
                 return;
             }
             catch (IOException e) {
@@ -120,27 +123,26 @@ public class BluetoothService extends IntentService {
     private void sendData(String msg)
     {
         OutputStream os;
-        OutputStreamWriter osw;
+        //OutputStreamWriter osw;
         try {
             os = socket.getOutputStream();
+            //osw = new OutputStreamWriter(os);
             os.write(msg.getBytes());
-            receiveData();
+            os.close();     // close stream
+            receiveData();  // receive reply
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private void sendState(String action, String msg)
+    private void broadcastState(String action, String msg)
     {
         Intent localIntent = new Intent(action);
-        localIntent.putExtra("msg",msg);
+        localIntent.putExtra(Constants.BL_MSG_KEY,msg);
         // Broadcasts the Intent to receivers in this app.
         LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
     }
 
-    private void takeAction(String msg) {
-
-    }
     /*
     private void acceptConnection() {
         BluetoothServerSocket bluetoothServerSocket;
@@ -152,7 +154,7 @@ public class BluetoothService extends IntentService {
                 socket = bluetoothServerSocket.accept();
                 Log.d("Bluetooth",bluetoothServerSocket.toString());
                 bluetoothServerSocket.close();
-                sendState(Constants.BL_ACTION_CONNECT);
+                broadcastState(Constants.BL_ACTION_CONNECT);
                 Constants.isShantaConnected = true;
                 return;
             }
