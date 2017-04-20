@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
@@ -59,12 +60,12 @@ public class HomeFragment extends Fragment{
                     }
                     Intent mServiceIntent = new Intent(getActivity(), BluetoothService.class);
                     mServiceIntent.setAction(Constants.BL_ACTION_CONNECT);
-                    Toast.makeText(getActivity(), "connecting!", Toast.LENGTH_SHORT).show();
+                    Snackbar.make(v,"Connecting...",Snackbar.LENGTH_SHORT).show();
                     getActivity().startService(mServiceIntent);
 
-                }else{
-                    Toast.makeText(getActivity(), "Bluetooth not supported in this device!", Toast.LENGTH_SHORT).show();
-                }
+                } else
+                    Snackbar.make(v,"Bluetooth not supported or no permission!",Snackbar.LENGTH_SHORT).show();
+
             }
         });
         mapBtn.setOnClickListener(new View.OnClickListener() {
@@ -72,12 +73,12 @@ public class HomeFragment extends Fragment{
             public void onClick(View v) {
 
                 if(Constants.isShantaConnected){
-                    Intent sendIntent = new Intent(getActivity(), BluetoothService.class);
-                    sendIntent.setAction(Constants.BL_ACTION_LOCATE);
-                    sendIntent.putExtra("msg",Constants.BL_MSG_LOCATE);
-                    getActivity().startService(sendIntent);
+                    Intent mapIntent = new Intent(getActivity(), BluetoothService.class);
+                    mapIntent.setAction(Constants.BL_ACTION_LOCATE);
+                    mapIntent.putExtra("msg",Constants.BL_MSG_LOCATE);
+                    getActivity().startService(mapIntent);
                 }else{
-                    Toast.makeText(getActivity(), "Please connect first!", Toast.LENGTH_SHORT).show();
+                    Snackbar.make(v,"Please Connect first!",Snackbar.LENGTH_SHORT).show();
                 }
 
                 /*
