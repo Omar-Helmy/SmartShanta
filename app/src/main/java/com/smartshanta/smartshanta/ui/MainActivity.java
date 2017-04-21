@@ -4,12 +4,11 @@ import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.DialogFragment;
@@ -17,14 +16,10 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -32,22 +27,16 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.firebase.ui.auth.AuthUI;
-import com.firebase.ui.auth.ErrorCodes;
-import com.firebase.ui.auth.IdpResponse;
-import com.firebase.ui.auth.ResultCodes;
-import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
-import com.mikepenz.materialdrawer.model.DividerDrawerItem;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
-import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 import com.mikepenz.materialdrawer.util.AbstractDrawerImageLoader;
 import com.mikepenz.materialdrawer.util.DrawerImageLoader;
 import com.smartshanta.smartshanta.R;
@@ -238,7 +227,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /******************Add Item Dialog******************/
-    public class AddItemDialog extends DialogFragment {
+    public static class AddItemDialog extends DialogFragment {
 
         private EditText itemName;
 
@@ -248,7 +237,7 @@ public class MainActivity extends AppCompatActivity {
             final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             // Get the layout inflater
             final LayoutInflater inflater = getActivity().getLayoutInflater();
-            final View view = inflater.inflate(R.layout.fragment_dialog_add_item, null);
+            final View view = inflater.inflate(R.layout.dialog_add_item, null);
             itemName = (EditText) view.findViewById(R.id.dialog_item_name);
             builder.setTitle("Add Item")
                     .setMessage("Type the item name you want to add:")
@@ -257,16 +246,16 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void onClick(DialogInterface dialog, int id) {
                             if(Constants.isShantaConnected){
-
+                                // Store in local database first:
                                 ContentValues cv = new ContentValues();
                                 cv.put(DataContract.COLUMN_ITEM_NAME, itemName.getText().toString());
                                 cv.put(DataContract.COLUMN_TS, Long.toString(System.currentTimeMillis()));
                                 cv.put(DataContract.COLUMN_ITEM_CHECKED, 0);
                                 getActivity().getContentResolver().insert(DataContract.LIST_URI, cv);
-
+                                // Send to Shanta
                                 Intent intent = new Intent(getActivity(), BluetoothService.class);
                                 intent.setAction(Constants.BL_ACTION_SEND);
-                                intent.putExtra("msg",Constants.BL_MSG_DEFINE_ITEM+itemName.getText().toString());
+                                intent.putExtra(Constants.BL_MSG_KEY, Constants.BL_MSG_DEFINE_ITEM + itemName.getText().toString());
                                 getActivity().startService(intent);
                             }else{
                                 Toast.makeText(getActivity(), "Please connect first!", Toast.LENGTH_SHORT).show();

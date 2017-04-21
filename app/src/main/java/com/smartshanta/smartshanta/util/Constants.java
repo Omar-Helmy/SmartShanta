@@ -20,6 +20,7 @@ public abstract class Constants {
     public static final String BL_ACTION_SEND = "send";
     public static final String BL_ACTION_ITEM_CHECK = "check";
     public static final String BL_ACTION_LOCATE = "locate";
+    public static final String BL_ACTION_UNLOCK = "unlock";
 
 
     /************ Messages ************/
@@ -34,6 +35,7 @@ public abstract class Constants {
     public static final String BL_MSG_FINGER_DEFINE_USER = "l";
     public static final String BL_MSG_FINGER_REMOVE_USER = "m";
     public static final String BL_MSG_LOCATE = "h";
+    public static final String BL_MSG_UNLOCK = ""; //TODO: get value from hardware
 
 
 }
