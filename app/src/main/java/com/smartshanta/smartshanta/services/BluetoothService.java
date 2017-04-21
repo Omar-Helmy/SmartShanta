@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.util.Set;
 import java.util.UUID;
 
@@ -34,6 +33,13 @@ public class BluetoothService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
+
+        /*
+        * Note:
+        * This Service only receives two actions:
+        * 1. Connect action at first time connection
+        * 2. Send data action that opens output stream
+        * */
 
         if (intent != null) {
             action = intent.getAction();
