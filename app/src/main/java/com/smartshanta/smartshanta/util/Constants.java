@@ -18,7 +18,7 @@ public abstract class Constants {
     /************* Actions ***********/
     public static final String BL_ACTION_CONNECT = "connect";
     public static final String BL_ACTION_SEND = "send";
-    public static final String BL_ACTION_ITEM_CHECK = "check";
+    public static final String BL_ACTION_STAFF_CHECK = "check";
     public static final String BL_ACTION_LOCATE = "locate";
     public static final String BL_ACTION_UNLOCK = "unlock";
 

@@ -25,6 +25,7 @@ public class BluetoothService extends IntentService {
     public static BluetoothSocket socket;
     private BluetoothDevice device;
     private String action;
+    private String msg;
     private final String LOG_TAG = BluetoothService.class.getSimpleName();
 
     public BluetoothService() {
@@ -37,16 +38,16 @@ public class BluetoothService extends IntentService {
         /*
         * Note:
         * This Service only receives two actions:
-        * 1. Connect action at first time connection
-        * 2. Send data action that opens output stream
+        * 1. [Connect_Action] at first time connection
+        * 2. Any other action: Send data action that opens output stream
         * */
 
         if (intent != null) {
             action = intent.getAction();
             // action is one of two options: connect to shanta at first time -OR- send data/request to shanta
-            if (action.equals(Constants.BL_ACTION_CONNECT)) {
+            if (action.equals(Constants.BL_ACTION_CONNECT))
                 connectToShanta();
-            } else
+            else
                 sendData(intent.getStringExtra(Constants.BL_MSG_KEY));
         }
     }

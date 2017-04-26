@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
     private TabLayout tabLayout;
     private ViewPager viewPager;
     private HomeFragment homeFragment;
-    private ListsFragment listsFragment;
+    private ListFragment listFragment;
     private PagerAdapter pagerAdapter;
     private FloatingActionButton fab;
     private Toolbar myToolbar;
@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
         tabLayout = (TabLayout) findViewById(R.id.tab_layout);
         // attach adapter to the viewpager:
         homeFragment = new HomeFragment();
-        listsFragment = new ListsFragment();
+        listFragment = new ListFragment();
         pagerAdapter = new PagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(pagerAdapter);
         // link between viewpager and tablayout
@@ -201,7 +201,7 @@ public class MainActivity extends AppCompatActivity {
                     return homeFragment;
                 }
                 case 1: {
-                    return listsFragment;
+                    return listFragment;
                 }
             }
             return null;
