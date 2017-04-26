@@ -1,9 +1,7 @@
 package com.smartshanta.smartshanta.ui;
 
-import android.content.Intent;
-import android.location.Location;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -12,6 +10,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.smartshanta.smartshanta.R;
+import com.smartshanta.smartshanta.util.Constants;
 
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -26,7 +25,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         // when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
-        loc = getIntent().getStringExtra("msg").split(",");
+        loc = getIntent().getStringExtra(Constants.BL_MSG_KEY).split(",");
         mapFragment.getMapAsync(this);
 
     }

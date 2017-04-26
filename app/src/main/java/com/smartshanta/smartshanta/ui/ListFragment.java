@@ -24,21 +24,20 @@ import android.widget.TextView;
 
 import com.smartshanta.smartshanta.R;
 import com.smartshanta.smartshanta.data.DataContract;
-import com.smartshanta.smartshanta.services.BluetoothService;
 import com.smartshanta.smartshanta.util.Constants;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ListsFragment extends Fragment  implements LoaderManager.LoaderCallbacks<Cursor>  {
+public class ListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private View fragmentLayout;
     private int CURSOR_LOADER_ID = 1;
     private RecyclerAdapter recyclerAdapter;
     private RecyclerView recyclerView;
 
-    public ListsFragment() {
+    public ListFragment() {
         // Required empty public constructor
     }
 
@@ -50,13 +49,14 @@ public class ListsFragment extends Fragment  implements LoaderManager.LoaderCall
         fragmentLayout = inflater.inflate(R.layout.fragment_list, container, false);
         recyclerView = (RecyclerView) fragmentLayout.findViewById(R.id.recycle_list);
 
+        // Recycle Adapter
         recyclerAdapter = new RecyclerAdapter();
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(recyclerAdapter);
 
         // The filter's action
         IntentFilter statusIntentFilter = new IntentFilter(
-                Constants.BL_ACTION_ITEM_CHECK);
+                Constants.BL_ACTION_STAFF_CHECK);
         // BC instance
         BluetoothReceiver bluetoothReceiver = new BluetoothReceiver();
         // Registers the DownloadStateReceiver and its intent filters
@@ -86,11 +86,11 @@ public class ListsFragment extends Fragment  implements LoaderManager.LoaderCall
     public void onLoaderReset(Loader<Cursor> loader) {
     }
 
-
     /////////////////////////////// Recycle Adapter /////////////////////////////////
     private class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         private Cursor cursor;
+        //private ArrayList<String> itemsList = new ArrayList<>();   // this is array of items names used to check states via bluetooth
 
         @Override
         public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
@@ -148,33 +148,39 @@ public class ListsFragment extends Fragment  implements LoaderManager.LoaderCall
                 timeText.setText(DateFormat.format("hh:mm a - dd/MM/yyyy",
                         Long.parseLong(cursor.getString(cursor.getColumnIndex(DataContract.COLUMN_TS)))));
                 checkBox.setChecked(cursor.getInt(cursor.getColumnIndex(DataContract.COLUMN_ITEM_CHECKED)) == 1);
-                if (Constants.isShantaConnected)
-                    checkItemInShanta(cursor.getString(cursor.getColumnIndex(DataContract.COLUMN_ITEM_NAME)));
-            }
+                // instead of check each item individually, store them in array to check later
+                /*if (Constants.isShantaConnected)
+                    checkItemInShanta(cursor.getString(cursor.getColumnIndex(DataContract.COLUMN_ITEM_NAME)));*/
 
+            }
+            /*
             private void checkItemInShanta(String item) {
                 Intent intent = new Intent(getActivity(), BluetoothService.class);
                 intent.setAction(Constants.BL_ACTION_ITEM_CHECK);
                 intent.putExtra(Constants.BL_MSG_KEY, Constants.BL_MSG_STUFF + item);
                 getActivity().startService(intent);
-            }
+            }*/
 
         }
     }
 
 
     // Broadcast receiver for receiving status updates from the IntentService
-    private class BluetoothReceiver extends BroadcastReceiver
-    {
+    private class BluetoothReceiver extends BroadcastReceiver {
+
         // Called when the BroadcastReceiver gets an Intent it's registered to receive
         @Override
         public void onReceive(Context context, Intent intent) {
-            if(intent.getAction().equals(Constants.BL_ACTION_ITEM_CHECK))
+            if (intent.getAction().equals(Constants.BL_ACTION_STAFF_CHECK))
             {
-                ContentValues cv = new ContentValues();
-                cv.put(DataContract.COLUMN_ITEM_CHECKED, intent.getStringExtra("msg").equals("inside")?1:0);
-                getActivity().getContentResolver().update(DataContract.appendToUri(intent.getStringExtra("msg")),
-                        cv,null,null);
+                // Response format: ItemName1,ItemState1_ItemName2,ItemState2 ...
+                for (String pair : intent.getStringExtra(Constants.BL_MSG_KEY).split("_")) {
+                    String[] itemState = pair.split(",");
+                    ContentValues cv = new ContentValues();
+                    cv.put(DataContract.COLUMN_ITEM_CHECKED, itemState[1].equals("Inside") ? 1 : 0);
+                    getActivity().getContentResolver().update(DataContract.appendToUri(itemState[0]),
+                            cv, null, null);
+                }
             }
         }
     }

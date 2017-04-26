@@ -165,6 +165,12 @@ public class HomeFragment extends Fragment{
             if (action.equals(Constants.BL_ACTION_CONNECT) && msg != null) {
                 bluetoothBtn.setVisibility(View.GONE);
                 Constants.isShantaConnected = true;
+                // start bluetooth service to get items states to update ListFragment
+                Intent staffIntent = new Intent(getActivity(), BluetoothService.class);
+                staffIntent.setAction(Constants.BL_ACTION_STAFF_CHECK);
+                staffIntent.putExtra(Constants.BL_MSG_KEY, Constants.BL_MSG_STUFF);
+                getActivity().startService(staffIntent);
+
             } else if (action.equals(Constants.BL_ACTION_LOCATE) && msg != null) {
                 Intent activityIntent = new Intent(getActivity(), MapActivity.class);
                 activityIntent.putExtra(Constants.BL_MSG_KEY, msg);
@@ -196,7 +202,7 @@ public class HomeFragment extends Fragment{
                                 // Send to Shanta
                                 Intent intent = new Intent(getActivity(), BluetoothService.class);
                                 intent.setAction(Constants.BL_ACTION_UNLOCK);
-                                intent.putExtra(Constants.BL_MSG_KEY, Constants.BL_MSG_UNLOCK + " " + password.getText().toString());
+                                intent.putExtra(Constants.BL_MSG_KEY, Constants.BL_MSG_UNLOCK + password.getText().toString());
                                 getActivity().startService(intent);
                             } else {
                                 Toast.makeText(getActivity(), "Please connect first!", Toast.LENGTH_SHORT).show();
