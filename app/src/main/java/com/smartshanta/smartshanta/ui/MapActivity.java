@@ -35,12 +35,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         // Add a marker in Sydney, Australia,
         // and move the map's camera to the same location.
-        double lat = Double.parseDouble(loc[0].substring(0,2))+Double.parseDouble(loc[0].substring(3,10))/60;
-        double lng = Double.parseDouble(loc[1].substring(1,3))+Double.parseDouble(loc[1].substring(4,11))/60;
-        LatLng pos = new LatLng(lat,lng);
+        double lat = Double.parseDouble(loc[0].substring(0, 2)) + Double.parseDouble(loc[0].substring(3, 10)) / 60;
+        double lng = Double.parseDouble(loc[1].substring(1, 3)) + Double.parseDouble(loc[1].substring(4, 11)) / 60;
+        LatLng pos = new LatLng(lat, lng);
         googleMap.addMarker(new MarkerOptions().position(pos)
                 .title("Shanta Location"));
-        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(pos,15.f));
+        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(pos, 15.f));
     }
 
 }

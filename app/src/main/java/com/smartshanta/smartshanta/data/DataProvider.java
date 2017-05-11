@@ -1,7 +1,6 @@
 package com.smartshanta.smartshanta.data;
 
 import android.content.ContentProvider;
-import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
@@ -24,7 +23,7 @@ public class DataProvider extends ContentProvider {
 
     static {
         uriMatcher.addURI(DataContract.AUTHORITY, DataContract.LIST_TABLE_NAME, LIST_MATCH);
-        uriMatcher.addURI(DataContract.AUTHORITY, DataContract.LIST_TABLE_NAME+"/*", ITEM_MATCH);
+        uriMatcher.addURI(DataContract.AUTHORITY, DataContract.LIST_TABLE_NAME + "/*", ITEM_MATCH);
     }
 
     @Override
@@ -38,15 +37,15 @@ public class DataProvider extends ContentProvider {
 
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         Cursor newCursor;
-        switch (uriMatcher.match(uri)){
+        switch (uriMatcher.match(uri)) {
             case LIST_MATCH:
-                newCursor = db.query(DataContract.LIST_TABLE_NAME,projection,selection,selectionArgs,null,null,sortOrder);
+                newCursor = db.query(DataContract.LIST_TABLE_NAME, projection, selection, selectionArgs, null, null, sortOrder);
                 newCursor.setNotificationUri(getContext().getContentResolver(), uri);
                 break;
 
             case ITEM_MATCH:
                 newCursor = db.query(DataContract.LIST_TABLE_NAME, projection,
-                        DataContract.COLUMN_ITEM_NAME+" == "+uri.getLastPathSegment(), selectionArgs,null,null,sortOrder);
+                        DataContract.COLUMN_ITEM_NAME + " == " + uri.getLastPathSegment(), selectionArgs, null, null, sortOrder);
                 newCursor.setNotificationUri(getContext().getContentResolver(), uri);
                 break;
 
@@ -67,10 +66,10 @@ public class DataProvider extends ContentProvider {
 
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         Uri newUri;
-        switch (uriMatcher.match(uri)){
+        switch (uriMatcher.match(uri)) {
             case LIST_MATCH:
-                long id = db.insert(DataContract.LIST_TABLE_NAME,null,contentValues);
-                if(id>0){
+                long id = db.insert(DataContract.LIST_TABLE_NAME, null, contentValues);
+                if (id > 0) {
                     newUri = DataContract.appendToUri(id);
                     getContext().getContentResolver().notifyChange(newUri, null);
                     break;
@@ -90,10 +89,10 @@ public class DataProvider extends ContentProvider {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         int id;
         Uri newUri;
-        switch (uriMatcher.match(uri)){
+        switch (uriMatcher.match(uri)) {
             case LIST_MATCH:
-                id = db.update(DataContract.LIST_TABLE_NAME,contentValues,s,strings);
-                if(id>0){
+                id = db.update(DataContract.LIST_TABLE_NAME, contentValues, s, strings);
+                if (id > 0) {
                     newUri = DataContract.appendToUri(id);
                     getContext().getContentResolver().notifyChange(newUri, null);
                     break;
@@ -101,13 +100,14 @@ public class DataProvider extends ContentProvider {
 
             case ITEM_MATCH:
                 id = db.update(DataContract.LIST_TABLE_NAME, contentValues,
-                        DataContract.COLUMN_ITEM_NAME+" == "+uri.getLastPathSegment(),strings);
-                if(id>0){
+                        DataContract.COLUMN_ITEM_NAME + " == " + uri.getLastPathSegment(), strings);
+                if (id > 0) {
                     newUri = DataContract.appendToUri(id);
                     getContext().getContentResolver().notifyChange(newUri, null);
                     break;
                 }
-            default: throw new UnsupportedOperationException("URI not matched!");
+            default:
+                throw new UnsupportedOperationException("URI not matched!");
         }
         db.close();
         return id;

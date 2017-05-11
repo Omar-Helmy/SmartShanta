@@ -19,8 +19,9 @@ import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.smartshanta.smartshanta.R;
 import com.smartshanta.smartshanta.data.DataContract;
@@ -33,7 +34,7 @@ import com.smartshanta.smartshanta.util.Constants;
 public class ListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private View fragmentLayout;
-    private int CURSOR_LOADER_ID = 1;
+    private final int CURSOR_LOADER_ID = 1;
     private RecyclerAdapter recyclerAdapter;
     private RecyclerView recyclerView;
 
@@ -74,7 +75,7 @@ public class ListFragment extends Fragment implements LoaderManager.LoaderCallba
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return new CursorLoader (getActivity(), DataContract.LIST_URI, null,null,null,null);
+        return new CursorLoader(getActivity(), DataContract.LIST_URI, null, null, null, null);
     }
 
     @Override
@@ -127,8 +128,9 @@ public class ListFragment extends Fragment implements LoaderManager.LoaderCallba
 
         public class NormalViewHolder extends RecyclerView.ViewHolder {
 
-            private final TextView nameText, timeText, statusText; // must be final
-            private final CheckBox checkBox;
+            private final TextView nameText, timeText; // must be final
+            private final ImageView imageView;
+            //private final CheckBox checkBox;
 
 
             public NormalViewHolder(View itemView) {
@@ -136,30 +138,26 @@ public class ListFragment extends Fragment implements LoaderManager.LoaderCallba
                 /* attach views */
                 nameText = (TextView) itemView.findViewById(R.id.list_item_text);
                 timeText = (TextView) itemView.findViewById(R.id.list_item_time);
-                statusText = (TextView) itemView.findViewById(R.id.list_item_check);
-                checkBox = (CheckBox) itemView.findViewById(R.id.list_item_checkbox);
+                imageView = (ImageView) itemView.findViewById(R.id.list_item_remove);
+                //checkBox = (CheckBox) itemView.findViewById(R.id.list_item_checkbox);
 
                 /* on click listener on the whole view */
+                imageView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // remove from shanta, but keep in database
+                        // TODO: remove!!
+                        Toast.makeText(getActivity(), "REMOVE!!", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
 
             private void setupData() {
                 cursor.moveToPosition(getAdapterPosition());
                 nameText.setText(cursor.getString(cursor.getColumnIndex(DataContract.COLUMN_ITEM_NAME)));
-                timeText.setText(DateFormat.format("hh:mm a - dd/MM/yyyy",
+                timeText.setText(DateFormat.format("hh:mm a - dd/MM/yyyy",  // hour:minute AM/PM - date
                         Long.parseLong(cursor.getString(cursor.getColumnIndex(DataContract.COLUMN_TS)))));
-                checkBox.setChecked(cursor.getInt(cursor.getColumnIndex(DataContract.COLUMN_ITEM_CHECKED)) == 1);
-                // instead of check each item individually, store them in array to check later
-                /*if (Constants.isShantaConnected)
-                    checkItemInShanta(cursor.getString(cursor.getColumnIndex(DataContract.COLUMN_ITEM_NAME)));*/
-
             }
-            /*
-            private void checkItemInShanta(String item) {
-                Intent intent = new Intent(getActivity(), BluetoothService.class);
-                intent.setAction(Constants.BL_ACTION_ITEM_CHECK);
-                intent.putExtra(Constants.BL_MSG_KEY, Constants.BL_MSG_STUFF + item);
-                getActivity().startService(intent);
-            }*/
 
         }
     }
@@ -171,8 +169,7 @@ public class ListFragment extends Fragment implements LoaderManager.LoaderCallba
         // Called when the BroadcastReceiver gets an Intent it's registered to receive
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals(Constants.BL_ACTION_STAFF_CHECK))
-            {
+            if (intent.getAction().equals(Constants.BL_ACTION_STAFF_CHECK)) {
                 // Response format: ItemName1,ItemState1_ItemName2,ItemState2 ...
                 for (String pair : intent.getStringExtra(Constants.BL_MSG_KEY).split("_")) {
                     String[] itemState = pair.split(",");

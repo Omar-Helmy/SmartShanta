@@ -1,9 +1,13 @@
 package com.smartshanta.smartshanta.ui;
 
 import android.app.Dialog;
+import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -15,6 +19,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -53,12 +58,13 @@ public class MainActivity extends AppCompatActivity {
     private HomeFragment homeFragment;
     private ListFragment listFragment;
     private PagerAdapter pagerAdapter;
-    private FloatingActionButton fab;
     private Toolbar myToolbar;
     private final int RC_SIGN_IN = 1;
     private AccountHeader header;
     private Drawer drawer;
     private final int ID_HEADER_DEFAULT = 1, ID_LOGIN_ITEM = 2, ID_SETTINGS_ITEM = 3;
+    private static ProgressDialog pd;
+    public FloatingActionButton fab;
 
 
     @Override
@@ -115,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
-                        if(drawerItem.getIdentifier()==ID_LOGIN_ITEM)
+                        if (drawerItem.getIdentifier() == ID_LOGIN_ITEM)
                             firebaseLogin();
                         return true;
                     }
@@ -128,22 +134,34 @@ public class MainActivity extends AppCompatActivity {
         /******* Try Firebase Login ********/
         firebaseLogin();
 
+        /********* Register BCR with intent filters **********/
+        // The Intent Filters' action
+        IntentFilter defineIF = new IntentFilter(Constants.BL_ACTION_DEFINE);
+        // BC instance
+        BluetoothReceiver bluetoothReceiver = new BluetoothReceiver();
+        // Registers each receiver and its intent filter
+        LocalBroadcastManager.getInstance(this)
+                .registerReceiver(bluetoothReceiver, defineIF);
+
         /********** Add Item To Shanta***********/
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(Constants.isShantaConnected)
-                    new AddItemDialog().show(getSupportFragmentManager(),AddItemDialog.class.getSimpleName());
+                if (Constants.isShantaConnected)
+                    new AddItemDialog().show(getSupportFragmentManager(), AddItemDialog.class.getSimpleName());
                 else
-                    Snackbar.make(v,"Please Connect first!",Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(v, "Please Connect first!", Snackbar.LENGTH_SHORT).show();
             }
         });
 
 
     }
 
-    private void firebaseLogin(){
+    /***********
+     * Firebase Login Method
+     ********/
+    private void firebaseLogin() {
 
         FirebaseAuth auth = FirebaseAuth.getInstance();
         // attach auth listener:
@@ -153,6 +171,8 @@ public class MainActivity extends AppCompatActivity {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
                     // User is signed in
+                    // get user ID
+                    String uid = user.getUid();
                     // Name, email address, and profile photo Url
                     String name = user.getDisplayName();
                     String email = user.getEmail();
@@ -185,8 +205,37 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    /*******************
+     * Broadcast Receiver
+     ************************/
+    // Broadcast receiver for receiving status updates from the IntentService
+    private class BluetoothReceiver extends BroadcastReceiver {
+        // Called when the BroadcastReceiver gets an Intent it's registered to receive
+        @Override
+        public void onReceive(Context context, Intent intent) {
 
-    /***********************************Fragment Pager Adapter**************************************/
+            String action = intent.getAction();
+            String msg = intent.getStringExtra(Constants.BL_MSG_KEY);
+
+            if (action.equals(Constants.BL_ACTION_DEFINE) && msg != null) {
+                // Store in local database first:
+                ContentValues cv = new ContentValues();
+                cv.put(DataContract.COLUMN_ITEM_NAME, msg);
+                cv.put(DataContract.COLUMN_TS, Long.toString(System.currentTimeMillis()));
+                cv.put(DataContract.COLUMN_ITEM_CHECKED, 1);
+                getContentResolver().insert(DataContract.LIST_URI, cv);
+                // Cancel the dialog
+                pd.dismiss();
+                Toast.makeText(MainActivity.this, "Done!", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(MainActivity.this, "Error occurred, try again!", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    /***********************************
+     * Fragment Pager Adapter
+     **************************************/
     private class PagerAdapter extends FragmentPagerAdapter {
 
         public PagerAdapter(FragmentManager fm) {
@@ -226,7 +275,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /******************Add Item Dialog******************/
+    /******************
+     * Define Item Dialog
+     ******************/
     public static class AddItemDialog extends DialogFragment {
 
         private EditText itemName;
@@ -239,35 +290,37 @@ public class MainActivity extends AppCompatActivity {
             final LayoutInflater inflater = getActivity().getLayoutInflater();
             final View view = inflater.inflate(R.layout.dialog_add_item, null);
             itemName = (EditText) view.findViewById(R.id.dialog_item_name);
-            builder.setTitle("Add Item")
+            builder.setTitle("Define Item")
                     .setMessage("Type the item name you want to add:")
                     .setView(view)
-                    .setPositiveButton("Add", new DialogInterface.OnClickListener() {
+                    .setPositiveButton("Send", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int id) {
-                            if(Constants.isShantaConnected){
-                                // Store in local database first:
-                                ContentValues cv = new ContentValues();
-                                cv.put(DataContract.COLUMN_ITEM_NAME, itemName.getText().toString());
-                                cv.put(DataContract.COLUMN_TS, Long.toString(System.currentTimeMillis()));
-                                cv.put(DataContract.COLUMN_ITEM_CHECKED, 0);
-                                getActivity().getContentResolver().insert(DataContract.LIST_URI, cv);
+                            if ((itemName.getText().toString().equals("")) && Constants.isShantaConnected) {
                                 // Send to Shanta
                                 Intent intent = new Intent(getActivity(), BluetoothService.class);
-                                intent.setAction(Constants.BL_ACTION_SEND);
+                                intent.setAction(Constants.BL_ACTION_DEFINE);
                                 intent.putExtra(Constants.BL_MSG_KEY, Constants.BL_MSG_DEFINE_ITEM + itemName.getText().toString());
                                 getActivity().startService(intent);
-                            }else{
+                                // Cancel dialog
+                                AddItemDialog.this.getDialog().cancel();
+                                // Wait for response from Shanta (this dialog will be canceled when response received)
+                                pd = new ProgressDialog(getActivity());
+                                pd.setTitle("Now, insert the item in Shanta with RFID tag");
+                                pd.setMessage("Waiting...");
+                                pd.setCancelable(false);
+                                pd.show();
+                            } else if (!Constants.isShantaConnected) {
                                 Toast.makeText(getActivity(), "Please connect first!", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(getActivity(), "Please type valid item name!", Toast.LENGTH_SHORT).show();
                             }
-                            AddItemDialog.this.getDialog().cancel();
                         }
-                    })
-                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            AddItemDialog.this.getDialog().cancel();
-                        }
-                    });
+                    }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    AddItemDialog.this.getDialog().cancel();
+                }
+            });
             return builder.create();
         }
     }
