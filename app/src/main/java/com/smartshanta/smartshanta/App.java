@@ -24,7 +24,7 @@ public class App extends MultiDexApplication {
         // create keys for loginName and loginPassword, first check if they created already,:
         SharedPreferences.Editor editor = sharedPref.edit(); // request editing shared pref file
 
-        if(sharedPref.getString("userID","null").equals("null")) // create new key
+        if (sharedPref.getString("userID", "null").equals("null")) // create new key
             editor.putString("userID", "null");
         editor.apply(); // save
 

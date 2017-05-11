@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_marginTop="12dp"
-    android:layout_marginLeft="12dp"
-    android:layout_marginRight="12dp"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="10dp"
+    android:layout_marginRight="10dp"
+    android:layout_marginTop="10dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:padding="12dp">
+        android:padding="10dp">
 
 
         <LinearLayout
@@ -20,29 +20,30 @@
 
             <ImageView
                 android:id="@+id/list_item_icon"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
                 android:layout_gravity="center_vertical"
                 android:src="@mipmap/bag_icon" />
 
             <TextView
                 android:id="@+id/list_item_text"
                 android:layout_width="0dp"
-                android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_marginLeft="12dp"
                 android:layout_marginStart="12dp"
+                android:layout_weight="1"
                 android:drawablePadding="10dp"
                 android:text="Item Name"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
-            <CheckBox
-                android:id="@+id/list_item_checkbox"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical" />
+            <ImageView
+                android:id="@+id/list_item_remove"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/ic_cancel_black_36dp" />
 
         </LinearLayout>
 
@@ -60,25 +61,24 @@
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="12dp"
             android:layout_marginStart="12dp"
-            android:gravity="center_vertical"
             android:drawableLeft="@drawable/ic_access_time_black_36dp"
-            android:drawablePadding="2dp"
+            android:drawablePadding="10dp"
+            android:gravity="center_vertical"
             android:text="hh:mm:ss"
             android:textSize="14sp" />
 
         <TextView
-            android:layout_width="wrap_content"
-            android:gravity="center_vertical"
+            android:id="@+id/list_item_check"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="14sp"
-            android:drawableLeft="@drawable/ic_assignment_turned_in_black_36dp"
-            android:text="in"
+            android:layout_gravity="center_vertical"
             android:layout_marginLeft="12dp"
             android:layout_marginStart="12dp"
+            android:drawableLeft="@drawable/ic_assignment_turned_in_black_36dp"
             android:drawablePadding="10dp"
-            android:layout_gravity="center_vertical"
-            android:textStyle="italic"
-            android:id="@+id/list_item_check" />
+            android:gravity="center_vertical"
+            android:text="in"
+            android:textSize="14sp" />
 
     </LinearLayout>
 

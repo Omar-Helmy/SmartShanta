@@ -22,7 +22,7 @@ import java.util.UUID;
 public class BluetoothService extends IntentService {
 
     private BluetoothAdapter adapter;
-    public static BluetoothSocket socket;
+    private static BluetoothSocket socket;
     private BluetoothDevice device;
     private String action;
     private String msg;
@@ -66,7 +66,7 @@ public class BluetoothService extends IntentService {
                 String deviceAdd = device.getAddress();
                 if (deviceName.equals(Constants.BL_DEVICE_NAME)) {
                     this.device = device;
-                    Log.i(LOG_TAG,"Device found! Name: \"" + deviceName + "\" Address: \"" + deviceAdd + "\"");
+                    Log.i(LOG_TAG, "Device found! Name: \"" + deviceName + "\" Address: \"" + deviceAdd + "\"");
                     // it is better to cancel discovery to save Bluetooth resources before starting any connections:
                     adapter.cancelDiscovery();
                     break;
@@ -76,17 +76,17 @@ public class BluetoothService extends IntentService {
         /*** Try to connect ***/
         try {
             // Get a BluetoothSocket to connect with the given BluetoothDevice.
-            if(device != null)
+            if (device != null)
                 socket = device.createRfcommSocketToServiceRecord(UUID.fromString(Constants.UUID));
         } catch (IOException e) {
         }
-        while(socket != null){
+        while (socket != null) {
             try {
                 // Connect to the remote device through the socket. This call blocks
                 // until it succeeds or throws an exception.
                 socket.connect();
                 // Done connected
-                Log.i(LOG_TAG,"Done! Connected with: "+socket.getRemoteDevice().getName());
+                Log.i(LOG_TAG, "Done! Connected with: " + socket.getRemoteDevice().getName());
                 broadcastState(Constants.BL_ACTION_CONNECT, Constants.BL_MSG_CONNECTED);
                 return;
             } catch (IOException connectException) {
@@ -96,22 +96,21 @@ public class BluetoothService extends IntentService {
 
     }
 
-    private void receiveData()
-    {
+    private void receiveData() {
         InputStream in;
         InputStreamReader inr;
         BufferedReader br;
-        String msg="";
+        String msg = "";
         char[] buffer = new char[30];  // buffer store
-        while(true) {
+        while (true) {
             try {
                 in = socket.getInputStream();
                 inr = new InputStreamReader(in);
                 br = new BufferedReader(inr);
-                while(in.available()>0 && inr.ready() && br.ready()) {
+                while (in.available() > 0) {
                     // TODO: use br.readLine() to get String!!!
                     br.read(buffer);
-                    if (buffer[0]=='\u0000')
+                    if (buffer[0] == '\u0000')
                         continue;
                     msg += new String(buffer);
                     broadcastState(action, msg);
@@ -119,16 +118,14 @@ public class BluetoothService extends IntentService {
                 // close stream and any associated streams with it:
                 in.close();
                 return;
-            }
-            catch (IOException e) {
+            } catch (IOException e) {
                 // continue
             }
 
         }
     }
 
-    private void sendData(String msg)
-    {
+    private void sendData(String msg) {
         OutputStream os;
         //OutputStreamWriter osw;
         try {
@@ -142,10 +139,9 @@ public class BluetoothService extends IntentService {
         }
     }
 
-    private void broadcastState(String action, String msg)
-    {
+    private void broadcastState(String action, String msg) {
         Intent localIntent = new Intent(action);
-        localIntent.putExtra(Constants.BL_MSG_KEY,msg);
+        localIntent.putExtra(Constants.BL_MSG_KEY, msg);
         // Broadcasts the Intent to receivers in this app.
         LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
     }

@@ -1,11 +1,8 @@
 package com.smartshanta.smartshanta.data;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-
-import com.smartshanta.smartshanta.R;
 
 /**
  * Created by Omar on 12/07/2016.
@@ -20,11 +17,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
 
-        db.execSQL("CREATE TABLE "+DataContract.LIST_TABLE_NAME+
-                " ("+DataContract._ID+" INTEGER PRIMARY KEY AUTOINCREMENT, "+
-                DataContract.COLUMN_ITEM_NAME+" TEXT NOT NULL, "+
-                DataContract.COLUMN_TS+" TEXT NOT NULL, "+
-                DataContract.COLUMN_ITEM_CHECKED+" INTEGER NOT NULL);");
+        db.execSQL("CREATE TABLE " + DataContract.LIST_TABLE_NAME +
+                " (" + DataContract._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                DataContract.COLUMN_ITEM_NAME + " TEXT NOT NULL, " +
+                DataContract.COLUMN_TS + " TEXT NOT NULL, " +
+                DataContract.COLUMN_ITEM_CHECKED + " INTEGER NOT NULL);");
     }
 
     @Override

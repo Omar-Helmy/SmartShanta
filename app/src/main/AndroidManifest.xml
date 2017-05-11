@@ -43,8 +43,9 @@
             android:enabled="true"
             android:exported="false" />
 
-        <activity android:name=".ui.MapActivity"
-            android:parentActivityName=".ui.MainActivity"/>
+        <activity
+            android:name=".ui.MapActivity"
+            android:parentActivityName=".ui.MainActivity" />
 
     </application>
 

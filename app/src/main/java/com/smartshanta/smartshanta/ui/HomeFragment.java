@@ -30,11 +30,12 @@ import com.smartshanta.smartshanta.util.Constants;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class HomeFragment extends Fragment{
+public class HomeFragment extends Fragment {
 
     private View fragmentLayout;
     private Button mapBtn, findBtn, unlockBtn, userNumBtn;
     private FloatingActionButton bluetoothBtn;
+
     public HomeFragment() {
         // Required empty public constructor
     }
@@ -64,11 +65,11 @@ public class HomeFragment extends Fragment{
                     }
                     Intent mServiceIntent = new Intent(getActivity(), BluetoothService.class);
                     mServiceIntent.setAction(Constants.BL_ACTION_CONNECT);
-                    Snackbar.make(v,"Connecting...",Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(v, "Connecting...", Snackbar.LENGTH_SHORT).show();
                     getActivity().startService(mServiceIntent);
 
                 } else
-                    Snackbar.make(v,"Bluetooth not supported or no permission!",Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(v, "Bluetooth not supported or no permission!", Snackbar.LENGTH_SHORT).show();
 
             }
         });
@@ -76,13 +77,13 @@ public class HomeFragment extends Fragment{
             @Override
             public void onClick(View v) {
 
-                if(Constants.isShantaConnected){
+                if (Constants.isShantaConnected) {
                     Intent mapIntent = new Intent(getActivity(), BluetoothService.class);
                     mapIntent.setAction(Constants.BL_ACTION_LOCATE);
                     mapIntent.putExtra(Constants.BL_MSG_KEY, Constants.BL_MSG_LOCATE);
                     getActivity().startService(mapIntent);
-                }else{
-                    Snackbar.make(v,"Please Connect first!",Snackbar.LENGTH_SHORT).show();
+                } else {
+                    Snackbar.make(v, "Please Connect first!", Snackbar.LENGTH_SHORT).show();
                 }
 
                 /*
@@ -109,12 +110,12 @@ public class HomeFragment extends Fragment{
         findBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(Constants.isShantaConnected){
+                if (Constants.isShantaConnected) {
                     Intent sendIntent = new Intent(getActivity(), BluetoothService.class);
                     sendIntent.setAction(Constants.BL_ACTION_SEND);
                     sendIntent.putExtra(Constants.BL_MSG_KEY, Constants.BL_MSG_FIND_ME);
                     getActivity().startService(sendIntent);
-                }else{
+                } else {
                     Snackbar.make(v, "Please Connect first!", Snackbar.LENGTH_SHORT).show();
                 }
             }
@@ -151,10 +152,11 @@ public class HomeFragment extends Fragment{
         return fragmentLayout;
     }
 
-    /******************* Broadcast Receiver ************************/
+    /*******************
+     * Broadcast Receiver
+     ************************/
     // Broadcast receiver for receiving status updates from the IntentService
-    private class BluetoothReceiver extends BroadcastReceiver
-    {
+    private class BluetoothReceiver extends BroadcastReceiver {
         // Called when the BroadcastReceiver gets an Intent it's registered to receive
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -164,6 +166,7 @@ public class HomeFragment extends Fragment{
 
             if (action.equals(Constants.BL_ACTION_CONNECT) && msg != null) {
                 bluetoothBtn.setVisibility(View.GONE);
+                ((MainActivity) getActivity()).fab.show();
                 Constants.isShantaConnected = true;
                 // start bluetooth service to get items states to update ListFragment
                 Intent staffIntent = new Intent(getActivity(), BluetoothService.class);
